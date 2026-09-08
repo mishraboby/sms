@@ -1,0 +1,748 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Management System</title>
+
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Babel CDN -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+        }
+
+        /* Header */
+        header {
+            background: #170f0d;
+            color: white;
+            padding: 28px 30px;
+        }
+
+        .header {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main */
+        .container {
+            max-width: 1000px;
+            margin: 35px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+        }
+
+        h1 {
+            text-align: center;
+            color: #17365d;
+            margin-bottom: 30px;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+            color: #333;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        /* Upload */
+        .upload-box {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .preview-photo {
+            width: 130px;
+            height: 150px;
+            object-fit: cover;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+        }
+
+        .preview-signature {
+            width: 250px;
+            height: 100px;
+            object-fit: contain;
+            border: 1px solid #aaa;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .buttons {
+            text-align: left;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            margin: 5px;
+        }
+
+        .register {
+            background: #198754;
+            color: red;
+        }
+
+        .reset {
+            background: #dc3545;
+            color: white;
+        }
+
+        .content {
+            text-align: center;
+            padding: 40px;
+        }
+
+        footer {
+            background: #17365d;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+        }
+
+        @media(max-width: 700px) {
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav a {
+                margin: 0 7px;
+                font-size: 14px;
+            }
+
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+           .upload-box {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+
+const { useState } = React;
+
+function App() {
+
+    const [page, setPage] = useState("home");
+
+    const [student, setStudent] = useState({
+        registrationNo: "",
+        rollNo: "",
+        name: "",
+        fatherName: "",
+        motherName: "",
+        dob: "",
+        gender: "",
+        mobile: "",
+        email: "",
+        course: "",
+        semester: "",
+        admissionYear: "",
+        address: "",
+        photo: null,
+        signature: null
+    });
+
+    const [photoPreview, setPhotoPreview] = useState(null);
+    const [signaturePreview, setSignaturePreview] = useState(null);
+
+    function handleChange(e) {
+        setStudent({
+            ...student,
+            [e.target.name]: e.target.value
+        });
+    }
+
+    function handlePhoto(e) {
+
+        const file = e.target.files[0];
+
+        if (file) {
+            setStudent({
+                ...student,
+                photo: file
+            });
+
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    }
+
+    function handleSignature(e) {
+
+        const file = e.target.files[0];
+
+        if (file) {
+            setStudent({
+                ...student,
+                signature: file
+            });
+
+            setSignaturePreview(URL.createObjectURL(file));
+        }
+    }
+
+    function handleSubmit(e) {
+
+        e.preventDefault();
+
+        console.log(student);
+
+        alert("Student Registration Successful!");
+    }
+
+    function resetForm() {
+
+        setStudent({
+            registrationNo: "",
+            rollNo: "",
+            name: "",
+            fatherName: "",
+            motherName: "",
+            dob: "",
+            gender: "",
+            mobile: "",
+            email: "",
+            course: "",
+            semester: "",
+            admissionYear: "",
+            address: "",
+            photo: null,
+            signature: null
+        });
+
+        setPhotoPreview(null);
+        setSignaturePreview(null);
+    }
+
+    return (
+        <>
+            <header>
+
+                <div className="header">
+
+                    <div className="logo">
+                        Student Management System
+                    </div>
+
+                    <nav>
+                        <a onClick={() => setPage("home")}>Home</a>
+                        <a onClick={() => setPage("about")}>About Us</a>
+                        <a onClick={() => setPage("contact")}>Contact</a>
+                        <a onClick={() => setPage("feedback")}>Feedback</a>
+                    </nav>
+
+                </div>
+
+            </header>
+
+
+            <div className="container">
+
+                {page === "home" && (
+
+                    <div className="card">
+
+                        <h1>Student Registration</h1>
+
+                        <form onSubmit={handleSubmit}>
+
+                            <div className="row">
+
+                                <div className="form-group">
+                                    <label>Registration Number *</label>
+
+                                    <input
+                                        type="text"
+                                        name="registrationNo"
+                                        value={student.registrationNo}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
+
+                                <div className="form-group">
+                                    <label>Roll Number *</label>
+                                  <input
+                                        type="text"
+                                        name="rollNo"
+                                        value={student.rollNo}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
+                            </div>
+
+
+                            <div className="row">
+
+                                <div className="form-group">
+                                    <label>Student Name *</label>
+
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={student.name}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
+
+                                <div className="form-group">
+                                    <label>Father's Name *</label>
+
+                                    <input
+                                        type="text"
+                                        name="fatherName"
+                                        value={student.fatherName}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
+                            </div>
+
+
+                            <div className="row">
+
+                                <div className="form-group">
+                                    <label>Mother's Name</label>
+
+                                    <input
+                                        type="text"
+                                        name="motherName"
+                                        value={student.motherName}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
+
+                                <div className="form-group">
+                                    <label>Date of Birth</label>
+
+                                    <input
+                                        type="date"
+                                        name="dob"
+                                        value={student.dob}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
+                            </div>
+
+
+                            <div className="row">
+
+                                <div className="form-group">
+                                    <label>Gender</label>
+
+                                    <select
+                                        name="gender"
+                                        value={student.gender}
+                                        onChange={handleChange}
+                                    >
+
+                                        <option value="">
+                                            Select Gender
+                                        </option>
+
+                                        <option value="Male">
+                                            Male
+                                        </option>
+
+                                        <option value="Female">
+                                            Female
+                                        </option>
+
+                                        <option value="Other">
+                                            Other
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <div className="form-group">
+                                    <label>Mobile Number *</label>
+                                     <input
+                                        type="tel"
+                                        name="mobile"
+                                        value={student.mobile}
+                                        onChange={handleChange}
+                                        maxLength="10"
+                                        required
+                                    />
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="row">
+
+                                <div className="form-group">
+
+                                    <label>Email</label>
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={student.email}
+                                        onChange={handleChange}
+                                    />
+
+                                </div>
+
+
+                                <div className="form-group">
+
+                                    <label>Course *</label>
+
+                                    <select
+                                        name="course"
+                                        value={student.course}
+                                        onChange={handleChange}
+                                        required
+                                    >
+
+                                        <option value="">
+                                            Select Course
+                                        </option>
+
+                                        <option value="BCA">
+                                            BCA
+                                        </option>
+
+                                        <option value="MCA">
+                                            MCA
+                                        </option>
+
+                                        <option value="BSc">
+                                            B.Sc.
+                                        </option>
+
+                                        <option value="MSc">
+                                            M.Sc.
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="row">
+
+                                <div className="form-group">
+
+                                    <label>Semester</label>
+
+                                    <select
+                                        name="semester"
+                                        value={student.semester}
+                                        onChange={handleChange}
+                                    >
+
+                                        <option value="">
+                                            Select Semester
+                                        </option>
+
+                                        <option value="1">
+                                            1st Semester
+                                        </option>
+
+                                        <option value="2">
+                                            2nd Semester
+                                        </option>
+
+                                        <option value="3">
+                                            3rd Semester
+                                        </option>
+
+                                        <option value="4">
+                                            4th Semester
+                                        </option>
+
+                                        <option value="5">
+                                            5th Semester
+                                        </option>
+
+                                        <option value="6">
+                                            6th Semester
+                                        </option>
+
+                                    </select>
+
+                                </div>
+ <div className="form-group">
+
+                                    <label>Admission Year</label>
+
+                                    <input
+                                        type="number"
+                                        name="admissionYear"
+                                        value={student.admissionYear}
+                                        onChange={handleChange}
+                                        placeholder="gadha"
+                                    />
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="form-group">
+
+                                <label>Address</label>
+
+                                <textarea
+                                    name="address"
+                                    value={student.address}
+                                    onChange={handleChange}
+                                    rows="4"
+placeholder="gadha"
+                                ></textarea>
+
+                            </div>
+
+
+                            <div className="form-group">
+
+                                <label>Student Photo</label>
+
+                                <div className="upload-box">
+
+                                    <input
+                                        type="file"
+                                        accept="image/jpeg,image/png"
+                                        onChange={handlePhoto}
+                                    />
+
+                                    {photoPreview && (
+                                        <img
+                                            src={photoPreview}
+                                            className="preview-photo"
+                                        />
+                                    )}
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="form-group">
+
+                                <label>Student Signature</label>
+
+                                <div className="upload-box">
+
+                                    <input
+                                        type="file"
+                                        accept="image/jpeg,image/png"
+                                        onChange={handleSignature}
+                                    />
+
+                                    {signaturePreview && (
+                                        <img
+                                            src={signaturePreview}
+                                            className="preview-signature"
+                                        />
+                                    )}
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="buttons">
+
+                                <button
+                                    type="submit"
+                                    className="register"
+                                >
+                                    Register Student
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="reset"
+                                    onClick={resetForm}
+                                >
+                                    Reset
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+                )}
+
+
+                {page === "about" && (
+
+                    <div className="card content">
+
+                        <h1>About Us</h1>
+
+                        <p>
+                            Welcome to Student Management System.
+                        </p>
+
+                        <p>
+                            This system is designed to manage student
+                            registration and academic information.
+                        </p>
+
+                    </div>
+
+                )}
+
+
+                {page === "contact" && (
+ <div className="card content">
+
+                        <h1>Contact Us</h1>
+
+                        <p>
+                            Email: info@example.com
+                        </p>
+
+                        <p>
+                            Mobile: 9876543210
+                        </p>
+
+                    </div>
+
+                )}
+
+
+                {page === "feedback" && (
+
+                    <div className="card content">
+
+                        <h1>Feedback</h1>
+
+                        <textarea
+                            rows="6"
+                            placeholder="Enter your feedback..."
+                        ></textarea>
+
+                        <br />
+
+                        <button className="register">
+                            Submit Feedback
+                        </button>
+
+                    </div>
+
+                )}
+
+            </div>
+
+
+            <footer>
+                © 2026 Student Management System
+            </footer>
+
+        </>
+    );
+}
+
+
+ReactDOM.createRoot(
+    document.getElementById("root")
+).render(<App />);
+
+</script>
+
+</body>
+</html>
