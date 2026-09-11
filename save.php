@@ -1,5 +1,5 @@
 <?php
-// CORS ???? ???? React ???? ??? ???? ??? ???
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -10,14 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Aiven MySQL ??????? ?????
+
 $host = "mysql-1d13f01a-mishraboby-bca5.d.aivencloud.com";
 $port = 11828;
 $user = "avnadmin";
-$pass = "AVNS_blWCD2yG11afE5k8fME"; // ???? ??????? ?????
+$pass = "AVNS_blWCD2yG11afE5k8fME"; 
 $db   = "defaultdb";
 
-// MySQL SSL ???????
+
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
 if (!@mysqli_real_connect($conn, $host, $user, $pass, $db, $port, NULL, MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT)) {
@@ -25,7 +25,6 @@ if (!@mysqli_real_connect($conn, $host, $user, $pass, $db, $port, NULL, MYSQLI_C
     exit();
 }
 
-// ???? ??? ????? ? ?? ?? ?????
 $tableSql = "CREATE TABLE IF NOT EXISTS students (
     id INT AUTO_INCREMENT PRIMARY KEY,
     roll_no VARCHAR(50) NOT NULL UNIQUE,
@@ -60,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $admissionYear = !empty($_POST['admissionYear']) ? (int)$_POST['admissionYear'] : 2026;
     $address       = $_POST['address'] ?? '';
 
-    // ????? ?????
+   
     $photoUrl = null;
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $photoExt = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
@@ -71,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ???????? ?????
+   
     $sigUrl = null;
     if (isset($_FILES['signature']) && $_FILES['signature']['error'] === UPLOAD_ERR_OK) {
         $sigExt = pathinfo($_FILES['signature']['name'], PATHINFO_EXTENSION);
@@ -82,17 +81,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ???? ?????? ????
+   
     $stmt = $conn->prepare("INSERT INTO students (roll_no, name, father_name, mother_name, dob, gender, mobile, email, course, semester, admission_year, address, photo_url, signature_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssssssssisss", $rollNo, $name, $fatherName, $motherName, $dob, $gender, $mobile, $email, $course, $semester, $admissionYear, $address, $photoUrl, $sigUrl);
 
     if ($stmt->execute()) {
-        echo json_encode(["success" => true, "message" => "Sone"]);
+        echo json_encode(["success" => true, "message" => "Record Saved!"]);
     } else {
         if ($conn->errno === 1062) {
-            echo json_encode(["success" => false, "message" => "?? Roll No ???? ?? ???? ??!"]);
+            echo json_encode(["success" => false, "message" => "Exiting!"]);
         } else {
-            echo json_encode(["success" => false, "message" => "??????: " . $stmt->error]);
+            echo json_encode(["success" => false, "message" => "ERR: " . $stmt->error]);
         }
     }
     $stmt->close();
