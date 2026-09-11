@@ -1,0 +1,542 @@
+[9/11/2026 7:20 AM] vinod mishra: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Management System</title>
+
+    <!-- React and Babel CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #1a365d;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav button {
+            background: none;
+            border: none;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        nav button.active, nav button:hover {
+            background-color: #2b6cb0;
+        }
+        .container {
+            flex: 1;
+            max-width: 900px;
+            margin: 2rem auto;
+            width: 95%;
+        }
+        .card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card h1 {
+            margin-bottom: 1.5rem;
+            color: #1a365d;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 0.5rem;
+        }
+        .row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+        input, select, textarea {
+            padding: 0.6rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #3182ce;
+        }
+        .upload-box {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 0.3rem;
+        }
+        .preview-photo {
+            width: 90px;
+            height: 110px;
+            object-fit: cover;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+        }
+        .preview-signature {
+            width: 140px;
+            height: 50px;
+            object-fit: contain;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        button.register {
+            background-color: #2b6cb0;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.register:hover {
+            background-color: #2c5282;
+        }
+        button.register:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
+[9/11/2026 7:20 AM] vinod mishra: button.reset {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.reset:hover {
+            background-color: #cbd5e0;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #e2e8f0;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+
+function App() {
+    const [page, setPage] = useState("register");
+    const [loading, setLoading] = useState(false);
+
+    const initialFormState = {
+        rollNo: "",
+        name: "",
+        fatherName: "",
+        motherName: "",
+        dob: "",
+        gender: "",
+        mobile: "",
+        email: "",
+        course: "",
+        semester: "",
+        admissionYear: "2026",
+        address: ""
+    };
+
+    const [student, setStudent] = useState(initialFormState);
+    const [photoFile, setPhotoFile] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(null);
+    const [signatureFile, setSignatureFile] = useState(null);
+    const [signaturePreview, setSignaturePreview] = useState(null);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setStudent((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handlePhoto = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleSignature = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSignatureFile(file);
+            setSignaturePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const resetForm = () => {
+        setStudent(initialFormState);
+        setPhotoFile(null);
+        setPhotoPreview(null);
+        setSignatureFile(null);
+        setSignaturePreview(null);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const formData = new FormData();
+        Object.keys(student).forEach((key) => {
+            formData.append(key, student[key]);
+        });
+
+        if (photoFile) formData.append("photo", photoFile);
+        if (signatureFile) formData.append("signature", signatureFile);
+
+        try {
+            const response = await fetch("save.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("?????: " + data.message);
+                resetForm();
+            } else {
+                alert("??????: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("??????? ??? ???? ??? ???? ??? ?????? ??! ????? ??????? ??? ?????");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <>
+            <header>
+                <h2>Student Portal</h2>
+                <nav>
+                    <button 
+                        className={page === "register" ? "active" : ""} 
+                        onClick={() => setPage("register")}
+                    >
+                        Register
+                    </button>
+                    <button 
+                        className={page === "about" ? "active" : ""} 
+                        onClick={() => setPage("about")}
+                    >
+                        About Us
+ </button>
+                    <button 
+                        className={page === "contact" ? "active" : ""} 
+                        onClick={() => setPage("contact")}
+                    >
+                        Contact Us
+                    </button>
+                    <button 
+                        className={page === "feedback" ? "active" : ""} 
+                        onClick={() => setPage("feedback")}
+                    >
+                        Feedback
+                    </button>
+                </nav>
+            </header>
+
+            <div className="container">
+                {page === "register" && (
+                    <div className="card">
+                        <h1>Student Registration Form</h1>
+                        <form onSubmit={handleSubmit}>
+                            <div className="row">
+                                <div className="form-group">
+                                    <label>Roll Number *</label>
+                                    <input
+                                        type="text"
+                                        name="rollNo"
+                                        value={student.rollNo}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="form-group">
+                                    <label>Student Name *</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={student.name}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Father's Name *</label>
+                                    <input
+                                        type="text"
+                                        name="fatherName"
+                                        value={student.fatherName}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="form-group">
+                                    <label>Mother's Name</label>
+                                    <input
+                                        type="text"
+                                        name="motherName"
+                                        value={student.motherName}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Date of Birth</label>
+                                    <input
+                                        type="date"
+                                        name="dob"
+                                        value={student.dob}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="form-group">
+                                    <label>Gender</label>
+                                    <select
+ name="gender"
+                                        value={student.gender}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Mobile Number *</label>
+                                    <input
+                                        type="tel"
+                                        name="mobile"
+                                        value={student.mobile}
+                                        onChange={handleChange}
+                                        maxLength="10"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="form-group">
+                                    <label>Email</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={student.email}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Course *</label>
+                                    <select
+                                        name="course"
+                                        value={student.course}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">Select Course</option>
+                                        <option value="BCA">BCA</option>
+                                        <option value="MCA">MCA</option>
+                                        <option value="BSc">B.Sc.</option>
+                                        <option value="MSc">M.Sc.</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="form-group">
+                                    <label>Semester</label>
+                                    <select
+                                        name="semester"
+                                        value={student.semester}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Select Semester</option>
+                                        <option value="1">1st Semester</option>
+                                        <option value="2">2nd Semester</option>
+                                        <option value="3">3rd Semester</option>
+                                        <option value="4">4th Semester</option>
+                                        <option value="5">5th Semester</option>
+                                        <option value="6">6th Semester</option>
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+ <label>Admission Year</label>
+                                    <input
+                                        type="number"
+                                        name="admissionYear"
+                                        value={student.admissionYear}
+                                        onChange={handleChange}
+                                        placeholder="2026"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Address</label>
+                                <textarea
+                                    name="address"
+                                    value={student.address}
+                                    onChange={handleChange}
+                                    rows="4"
+                                ></textarea>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Student Photo</label>
+                                <div className="upload-box">
+                                    <input
+                                        type="file"
+                                        accept="image/jpeg,image/png"
+                                        onChange={handlePhoto}
+                                    />
+                                    {photoPreview && (
+                                        <img
+                                            src={photoPreview}
+                                            alt="Photo Preview"
+                                            className="preview-photo"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Student Signature</label>
+                                <div className="upload-box">
+                                    <input
+                                        type="file"
+                                        accept="image/jpeg,image/png"
+                                        onChange={handleSignature}
+                                    />
+                                    {signaturePreview && (
+                                        <img
+                                            src={signaturePreview}
+                                            alt="Signature Preview"
+                                            className="preview-signature"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="buttons">
+                                <button type="submit" className="register" disabled={loading}>
+                                    {loading ? "Saving..." : "Register Student"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="reset"
+                                    onClick={resetForm}
+                                >
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
+
+                {page === "about" && (
+                    <div className="card content">
+                        <h1>About Us</h1>
+                        <p>Welcome to Student Management System.</p>
+                        <p>This system is designed to manage student registration and academic information.</p>
+                    </div>
+                )}
+ {page === "contact" && (
+                    <div className="card content">
+                        <h1>Contact Us</h1>
+                        <p>Email: info@example.com</p>
+                        <p>Mobile: 9876543210</p>
+                    </div>
+                )}
+
+                {page === "feedback" && (
+                    <div className="card content">
+                        <h1>Feedback</h1>
+                        <textarea
+                            rows="6"
+                            placeholder="Enter your feedback..."
+                            style={{ width: "100%", marginBottom: "1rem" }}
+                        ></textarea>
+                        <button className="register">
+                            Submit Feedback
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            <footer>
+                © 2026 Student Management System
+            </footer>
+        </>
+    );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+</body>
+</html>
