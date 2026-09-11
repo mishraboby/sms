@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ssssssssssisss", $rollNo, $name, $fatherName, $motherName, $dob, $gender, $mobile, $email, $course, $semester, $admissionYear, $address, $photoUrl, $sigUrl);
 
     if ($stmt->execute()) {
-        echo json_encode(["success" => true, "message" => "????? ?? ??????? ??????????? ??? ?? ???!"]);
+        echo json_encode(["success" => true, "message" => "Sone"]);
     } else {
         if ($conn->errno === 1062) {
             echo json_encode(["success" => false, "message" => "?? Roll No ???? ?? ???? ??!"]);
